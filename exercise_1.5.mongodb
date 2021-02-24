@@ -177,7 +177,7 @@ for(let funding of this.fundings){
 // Sortieren Sie das Ergebnis nach dem titel aufsteigend.
 
 
-use insy;
+use ('insy');
 db.projects.find({
 
 projectType: "RESEARCH_FUNDING_PROJECT",
