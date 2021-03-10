@@ -1,11 +1,11 @@
- use insy;
+ use (insy);
 
 // -- --------------------------------------------------------------------------------------------- --
 // --    Collection: events
 // -- --------------------------------------------------------------------------------------------- --
 db.getCollection("events").drop();
 
-var event =   {
+var event = {
     name : "Battle of Gaugamela",    // required  length: 0-100
     date :  new Date('Oct 1, 331'),  // required
     cat : "BC",           // required   values: [ AC, BC ]
