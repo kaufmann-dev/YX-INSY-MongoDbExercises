@@ -21,7 +21,7 @@
 // -- 2.) Beispiel - Abfragen
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle REQUEST_FUNDING_PROJECT Projekte.
-use insy;
+use (insy);
    db.getCollection("projects").find({
    $and : [
    { projectType : { $eq: "REQUEST_FUNDING_PROJECT"}}
@@ -140,7 +140,7 @@ return amount > 12000;
 
 
 // b) Finden Sie alle Projekte die 2 oder mehrere Förderungen haben.
-use insy;
+use (insy);
 db.projects.find({
 $where : function (){
 return this.funding.length >=2;

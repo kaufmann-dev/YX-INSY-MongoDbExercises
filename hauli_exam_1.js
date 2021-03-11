@@ -25,7 +25,7 @@ db.getCollection("personalities").drop();
 // };
 
 db.createCollection("personalities");  //Exercise: Anpassung und Test mit naechstem Insert
-use insy;
+use (insy);
 
 db.createCollection("personalities",
     {
@@ -59,6 +59,9 @@ db.createCollection("personalities",
                             minLength: 0,
                             maxLength: 100
                         }
+                    },
+                    description : {
+                        bsonType : "string"                        
                     },
                     birth: {
                         bsonType: "object",

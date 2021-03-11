@@ -21,13 +21,16 @@ db.personalities.find({
 
 // Hinweis: Sie können die Zeitgrenzen für die Auswertung einrechnen.
 
-
-
-
 db.personalities.find({
   $or:[
-    {$and: [{"birth.cat":{$eq:"AC"}}, {"birth.year" :{$lt: 500}]}
-    {$and: [{"birth.cat":{$eq:"BC"}}, {"birth.year" :{$gt: 500}]}
+    {$and: [
+      {"birth.cat":{$eq:"AC"}},
+      {"birth.year" :{$lt: 500}}
+    ]},
+    {$and: [
+      {"birth.cat":{$eq:"BC"}},
+      {"birth.year" :{$gt: 500}}
+    ]}
   ]
 }).sort({name : 1, birth:1});
 
@@ -44,20 +47,11 @@ db.personalities.find({
 // (AFRICA) geboren wurden. Die Person (keywords) muss General (General) sein.
 
 db.personalities.find({
-  $and: {
-    {
-    $nor: {
-        {"birth.location" : {$in:["AMERICA"]}},
-        {"birth.location" : {$in:["AFRICA"]}}
-      },
-      $where:{
-
-      }
-      "keywords" : {$in:["General"]}
-    }
-  }
-  
-})
+  "birth.continent" : {
+    $in : ["AMERICA", "AFRICA"]
+  },
+  "keywords" : "General"
+});
 
 
 // -- ------------------------------------------------------------------------- --
@@ -76,4 +70,4 @@ db.personalities.find({
 
 db.personalities.find({
 
-})
+});

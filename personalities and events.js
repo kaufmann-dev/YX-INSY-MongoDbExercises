@@ -1,4 +1,4 @@
-use insy;
+use (insy);
 
 // -- -------------------------------------------------------------------------------------------- --
 // --    Collection: personalities
@@ -390,7 +390,7 @@ db.getCollection("personalities").insertMany([
 
 db.getCollection("personalities").find({});
 
- use insy;
+use (insy);
 
 // -- --------------------------------------------------------------------------------------------- --
 // --    Collection: events
