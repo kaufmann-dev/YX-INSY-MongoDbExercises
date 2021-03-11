@@ -213,3 +213,14 @@ db.createCollection("newTestCollection", {
         }
     }
 });
+
+db.newTestCollection.count();
+
+var bruh = {
+    firstName : "David",
+    lastName : "Kaufmann"
+};
+
+db.getCollection("newTestCollection").insertOne(bruh);
+
+db.newTestCollection.find({});
