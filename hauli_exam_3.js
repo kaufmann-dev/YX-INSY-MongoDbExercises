@@ -125,6 +125,6 @@ db.personalities.updateMany({
         revision : 1
     },
     $pull : {
-        reviews : [1, 3]
+        "reviews":{$in:[1,3]}
     }
 });
