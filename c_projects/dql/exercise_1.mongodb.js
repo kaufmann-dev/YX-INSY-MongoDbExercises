@@ -334,5 +334,3 @@ db.projects.aggregate([
 // --------------------------------------------------------------------------------------
 // Finden Sie alle RESEARCH_FUNDING_PROJECT Projekte die 2 oder mehr Subprojekte haben.
 // Geben Sie für die Projekte folgende Property aus: title, projectType, projectState.
-
-// Sortieren Sie das Ergebnis nach dem titel aufsteigend.

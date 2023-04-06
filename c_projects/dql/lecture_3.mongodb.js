@@ -24,7 +24,34 @@ use('c_projects');
 db.facilities.find({});
 db.projects.find({});
 
-
+db.facilities.aggregate([
+    {
+        $lookup: {
+            from: 'projects',
+            localField: 'projects.project_id',
+            foreignField: '_id',
+            as: 'projectsLookup'
+        }
+    },
+    {
+        $unwind: '$projectsLookup'
+    },
+    {
+        $project: {
+            _id: 1,
+            name: 1,
+            code: 1,
+            projects: {
+                _id: "$projectsLookup._id",
+                title: "$projectsLookup.title",
+                projectFunding:{
+                    $sum : "$projectsLookup.fundings.amount"
+                }
+                
+            }
+        }
+    }
+])
 
 
 // -- ----------------------------------------------------------------------------------------- --
@@ -34,8 +61,6 @@ db.projects.find({});
 // title, projectType, projectState, projectFunding
 
 db.projects.find({});
-
-
 
 
 

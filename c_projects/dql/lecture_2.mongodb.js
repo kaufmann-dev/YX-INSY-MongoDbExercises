@@ -35,9 +35,29 @@ db.projects.find({});
 
 db.projects.find({});
 
+db.projects.aggregate([
+    {
+        $lookup: {
+          from: collection,
+          localField: field,
+          foreignField: field,
+          as: result
+        }
+    }
+])
 
-
-
+db.projects.aggregate([
+    {
+        $addFields: {
+          funcingAmounr: {
+            $sum: "$fundings.amount"
+          }
+        }
+    },
+    {
+        
+    }
+])
 
 
 // -- ----------------------------------------------------------------------------------------- --
