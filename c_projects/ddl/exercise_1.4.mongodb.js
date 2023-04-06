@@ -5,11 +5,12 @@
 // Hinweis: Alle Attribute sind required
 
 var project = {
-    title : "Produktionsplanungssysteme", // lenght: 5 - 100 // required
+    title : "Produktionsplanungssysteme", // lenght: 5 - 100
+                                          // required
     projectType  : "REQUEST_FUNDING_PROJECT",
-    /*[REQUEST_FUNDING_PROJECT, RESEARCH_FUNDING_PROJECT, MANAGEMENT_PROJECT, STIPENDIUM]*/
+    // [REQUEST_FUNDING_PROJECT, RESEARCH_FUNDING_PROJECT, MANAGEMENT_PROJECT, STIPENDIUM]
     projectState : "APPROVED",
-    /*[APPROVED, CREATED, CANCLED, RUNNING]*/
+    // [APPROVED, CREATED, CANCLED, RUNNING]
     description  : "Projekt zur Planung von Produktionsplanungssystemen", // length: 4000
     projectBegin : ISODate("2012-06-22T22:00:00.000+0000"),
     isFWFSponsered : true,

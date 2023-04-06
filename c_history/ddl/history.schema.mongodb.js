@@ -9,9 +9,9 @@ db.getCollection("personalities").drop();
 // example personality
 var person =   {
     _id  : 1,
-    name     : "Alexander the Great",       // required  length: 0 - 100
-    fullName : "Alexander III of Macedon",  // reuqired  length: 0 - 200
-    short    : "The General King",   // required length: 0 - 50
+    name     : "Alexander the Great",      // required  length: 0 - 100
+    fullName : "Alexander III of Macedon", // reuqired  length: 0 - 200
+    short    : "The General King",         // required length: 0 - 50
     titles   : [
         "King of Macedon", "Pharaoh of Egypt", "King of Persia", "Lord of Asia"
     ], // type: stringarray, elements -> length: 0 - 100
@@ -399,36 +399,37 @@ db.getCollection("events").drop();
 
 // example event
 var event = {
-    name : "Battle of Gaugamela",    // required  length: 0-100
-    date :  new Date('Oct 1, 331'),  // required
-    cat : "BC",           // required   values: [ AC, BC ]
-    eventType : "BATTLE", // required   values: [ BATTLE, SIEGE ]
-    location : "Iraq",    // length: 0 - 100
+    name : "Battle of Gaugamela",        // required  length: 0-100
+    date :  new Date('Oct 1, 331'),      // required
+    cat : "BC",                          // required   values: [ AC, BC ]
+    eventType : "BATTLE",                // required   values: [ BATTLE, SIEGE ]
+    location : "Iraq",                   // length: 0 - 100
     war : "Alexander the Great - Conquest of the Persian Empire",
-    victor   : "Alexander the Great", // length: 0-100
+    victor   : "Alexander the Great",    // length: 0-100
     territorialChange : "Alexander gains Babylon, half of Persia and all other parts of Mesopotamia.",
     description : "The Battle of Gaugamela, was the decisive battle of Alexander the Great's invasion of the Persian Achaemenid Empire. In 331 BC Alexander's army of the Hellenic League met the Persian army of Darius III near Gaugamela, close to the modern city of Dohuk in Iraqi Kurdistan. Though heavily outnumbered, Alexander emerged victorious due to his army's superior tactics and his deft employment of light infantry. It was a decisive victory for the Hellenic League and led to the fall of the Achaemenid Empire.", // required
     belligerents : [
         {
-            commander : "Alexander the Great",  // required  length: 0-100
-            nation : "Macedonia",               // required  length: 0-100
+            commander : "Alexander the Great",    // required  length: 0-100
+            nation : "Macedonia",                 // required  length: 0-100
             generals : [
                 "Hephaestion", "Ptolemy", "Parmenion", "Cleitus"
             ], // required
             composition : [
                 {
-                    type : "HEAVY_INFANTRY",       /* required values: [ "HEAVY_INFANTRY", "LIGHT_INFANTRY", "CAVALRY", "MERCENARIES", "ARCHER", "CHARIOTS", "HEAVY_CAVALRY", "BEASTS", "WARSHIP", "SHIP", "ARQUEBUSES", "ARTILLERY", "HEAVY_ARTILLERY","AIRCRAFT_CARRIER", "BATTLE_SHIP", "HEAVY_CRUISERS", "DESTROYER", "AIRCRAFT", "SUBMARINE", "TANKS", "GUNS"]   */
-                    amount : new NumberInt(31000)  // required                  
+                    type : "HEAVY_INFANTRY",
+                    // required values: [ "HEAVY_INFANTRY", "LIGHT_INFANTRY", "CAVALRY", "MERCENARIES", "ARCHER", "CHARIOTS", "HEAVY_CAVALRY", "BEASTS", "WARSHIP", "SHIP", "ARQUEBUSES", "ARTILLERY", "HEAVY_ARTILLERY","AIRCRAFT_CARRIER", "BATTLE_SHIP", "HEAVY_CRUISERS", "DESTROYER", "AIRCRAFT", "SUBMARINE", "TANKS", "GUNS"]
+                    amount : new NumberInt(31000) // required                  
                 }
             ], // required
             losses : [
                 {
-                    type : "HEAVY_INFANTRY", // required
-                    /* required values: [ "HEAVY_INFANTRY", "LIGHT_INFANTRY", "CAVALRY", "MERCENARIES", "ARCHER", "CHARIOTS", "HEAVY_CAVALRY", "BEASTS", "WARSHIP", "SHIP", "ARQUEBUSES", "ARTILLERY", "HEAVY_ARTILLERY","AIRCRAFT_CARRIER",    "BATTLE_SHIP", "HEAVY_CRUISERS", "DESTROYER", "AIRCRAFT", "SUBMARINE", "TANKS", "GUNS"]   */
-                    amount : new NumberInt(300) // required        
+                    type : "HEAVY_INFANTRY",      // required
+                    // required values: [ "HEAVY_INFANTRY", "LIGHT_INFANTRY", "CAVALRY", "MERCENARIES", "ARCHER", "CHARIOTS", "HEAVY_CAVALRY", "BEASTS", "WARSHIP", "SHIP", "ARQUEBUSES", "ARTILLERY", "HEAVY_ARTILLERY","AIRCRAFT_CARRIER",    "BATTLE_SHIP", "HEAVY_CRUISERS", "DESTROYER", "AIRCRAFT", "SUBMARINE", "TANKS", "GUNS"]
+                    amount : new NumberInt(300)   // required        
                 }
                
-            ] // required
+            ]  // required
         }
     ]
 };

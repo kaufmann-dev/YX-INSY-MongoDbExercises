@@ -54,9 +54,9 @@ db.creature.updateMany({
     },
     $push : {
         funding : {
-            _id = ObjectId("874632936283294250329112"),
-            debitorName = "HTL Krems",
-            amount = new NumberLong(10000)
+            _id : ObjectId("874632936283294250329112"),
+            debitorName : "HTL Krems",
+            amount : new NumberLong(10000)
         }
     }
 });

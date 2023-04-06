@@ -1,12 +1,15 @@
 use('c_history');
+
+
 // -- ------------------------------------------------------------------------- -- 
-// -- 1) Beispiel - Abfragen (1.Punkt)
+// -- 1) Beispiel - Abfragen (1 Punkt)
 // -- ------------------------------------------------------------------------- --
 // Finden Sie alle Persönlichkeiten, die vor Christus in Europa bzw. Asien
 // geboren wurden.
-
+//
 // Geben Sie folgende Felder aus: name, description. Sortieren Sie das Ergebnis 
 // nach dem Namen aufsteigend.
+
 db.personalities.find({
   "birth.cat" : {$in:["BC"]},
   "birth.location" : {$in:["Europe", "Asia"]}
@@ -15,11 +18,11 @@ db.personalities.find({
 
 
 // -- ------------------------------------------------------------------------- --
-// -- 2) Beispiel - Abfrqte lteagen (1.Punkte)
+// -- 2) Beispiel - Abfragen (1 Punkte)
 // -- ------------------------------------------------------------------------- --
 // Finden Sie alle Persönlichkeiten, die zwischen 500 BC und 500 AC geboren wurden.
 // Geben Sie folgende Felder aus: name, birth
-
+//
 // Hinweis: Sie können die Zeitgrenzen für die Auswertung einrechnen.
 
 db.personalities.find({
@@ -40,9 +43,9 @@ db.personalities.find({
 //             { $and : [ {...}, {...} ] }
 //             { $or  : { {...}, {...} ] } 
 //          ]
-
+//
 // -- ------------------------------------------------------------------------- --
-// -- 3) Beispiel - Abfragen (1.Punkt)
+// -- 3) Beispiel - Abfragen (1 Punkt)
 // -- ------------------------------------------------------------------------- --
 // Finden Sie alle Persönlichkeiten die weder in Amerika (AMERICA) noch in Afrika
 // (AFRICA) geboren wurden. Die Person (keywords) muss General (General) sein.
@@ -56,19 +59,33 @@ db.personalities.find({
 
 
 // -- ------------------------------------------------------------------------- --
-// -- 4) Beispiel - Abfragen (2.Punkt)
+// -- 4) Beispiel - Abfragen (2 Punkte)
 // -- ------------------------------------------------------------------------- --
 // Finden Sie alle Persönlichkeiten aus Europa (EUROPE), die nicht älter als 40 Jahre 
 // wurden.
-
+//
 // Hinweis: Sie können in JavaScript die Math.Abs Funktion zur Berechnung des Betrags 
 // verwenden.
-
+//
 // Hinweis: Prüfen Sie ob für eine  ein Sterbedatum überhaupt existiert. Sie können das 
 //          mit dem $exists Operator machen.
 //
 //          z.B.: db.<collection>.find({ <field> : { $exists : true }}
 
 db.personalities.find({
-
+  "birth.continent" : "EUROPE",
+  "death" : {
+      $exists : true
+  },
+  $where : function(){
+      let age = 0;
+      
+      if(this.birth.cat == this.death.cat) {
+          age = Math.abs(this.birth.year - this.death.year);
+      } else {
+          age = this.birth.year + this.death.year;
+      }
+      
+      return age <= 40;
+  }
 });

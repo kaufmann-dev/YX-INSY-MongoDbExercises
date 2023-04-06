@@ -1,103 +1,99 @@
 use('c_projects');
+
 // --------------------------------------------------------------------------------------
-// -- 1.) Beispiel - Abfragen Syntax
+// Abfragen Syntax
 // --------------------------------------------------------------------------------------
 // Syntax: db.getCollection("<collection>").find(<query>);
-
-/* Syntax: query => {
-              $logicalOperator : [
-                 { <Condition> },
-                 { <Condition> }
-              ]            
-           }
-*/
-
+//
+// Syntax: query => {
+//           $logicalOperator : [
+//             { <Condition> },
+//             { <Condition> }
+//           ]            
+//         }
+//
+//
 // $logicalOperator := $and || $or || $nor
-
+//
 // Syntax: Condition := { <field> : { $compOp : value  }}
-
+//
 //         $compOp := $eq || $ne || $lt || $lte || $gt || $gte
-
+//
 // --------------------------------------------------------------------------------------
-// -- 2.) Beispiel - Abfragen
+// 2.) Beispiel - Abfragen
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle REQUEST_FUNDING_PROJECT Projekte.
 
-   db.getCollection("projects").find({
-   $and : [
-   { projectType : { $eq: "REQUEST_FUNDING_PROJECT"}}
-   ]
-   });
-
+use('c_projects');
+db.getCollection("projects").find({
+    $and : [
+        {    projectType : { $eq: "REQUEST_FUNDING_PROJECT"}}
+    ]
+});
 
 // b) Finden Sie alle Projekte die vom FWF und von der FFG gesponsert werden.
-   db.getCollection("projects").find({
-   $and : [
-   { isFWFSponsered : {$eq : true} },
-   { isFFGSponsered : {$eq : true} }
-   ]
-   })
 
+use('c_projects');
+db.getCollection("projects").find({
+    $and : [
+        { isFWFSponsered : {$eq : true} },
+        { isFFGSponsered : {$eq : true} }
+    ]
+});
 
 // c) Finden Sie alle Projekte aus die weder "REQUEST_FUNDING_PROJECT" Projekte noch
 //    "RESEARCH_FUNDING_PROJECT" Projekte sind.
 
+use('c_projects');
 db.getCollection("projects").find({
     $nor : [
-    {projectType : {$eq : "REQUEST_FUNDING_PROJECT"}},
-    {projectType : {$eq : "RESEARCH_FUNDING_PROJECT"}}
-]
+        {projectType : {$eq : "REQUEST_FUNDING_PROJECT"}},
+        {projectType : {$eq : "RESEARCH_FUNDING_PROJECT"}}
+    ]
 });
 
 // d) Finden Sie alle Projekte die einen der folgenden Projekttypen haben: REQUEST_FUNDING_PROJECT
 //    RESEARCH_FUNDING_PROJECT
+
+use('c_projects');
 db.getCollection("projects").find({
     $or : [
-    {projectType : {$eq : "REQUEST_FUNDING_PROJECT"}},
-    {projectType : {$eq : "RESEARCH_FUNDING_PROJECT"}}
-]
+        {projectType : {$eq : "REQUEST_FUNDING_PROJECT"}},
+        {projectType : {$eq : "RESEARCH_FUNDING_PROJECT"}}
+    ]
 });
-// e) Finden Sie alle Subprojekte die einen appliedResearch Wert haben zwischen 50 und 100
-
-
 
 // --------------------------------------------------------------------------------------
-// -- 3.) Beispiel - Abfragen / Kurzformen
+// 3.) Beispiel - Abfragen / Kurzformen
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle REQUEST_FUNDING_PROJECT Projekte.
-
+//
 // Kurzform: $and Operator
-/*db.getCollection("projects").find({
-    $and: [
-        { projectType: { $eq: "REQUEST_FUNDING_PROJECT" } }
-    ]
-});*/
 
-
-
-
+use('c_projects');
+db.getCollection("projects").find({
+    projectType: { $eq: "REQUEST_FUNDING_PROJECT" }
+});
 
 // b) Finden Sie alle Projekte die vom FWF und von der FFG gesponsert werden.
 
-/*db.getCollection("projects").find({
+use('c_projects');
+db.getCollection("projects").find({
     $and: [
         { isFFGSponsered: { $eq: true } },
         { isFWFSponsered: { $eq: true } }
     ]
-});*/
-
-
-
+});
 
 // c) Finden Sie alle Subprojekte die einen appliedResearch Wert haben zwischen 50 und 100
 
-/*db.getCollection("subprojects").find({
+use('c_projects');
+db.getCollection("subprojects").find({
     $and: [
         { appliedResearch: { $gte: 50 } },
         { appliedResearch: { $lte: 100 } }
     ]
-});*/
-
+});
 
 // --------------------------------------------------------------------------------------
 // -- 4.) Beispiel - Abfragen / Embedded Objects
@@ -105,11 +101,15 @@ db.getCollection("projects").find({
 // a) Finden Sie alle Subprojekte die am Institut für Softwareentwicklung durchgeführt
 //    werden und einen Förderung haben die höher ist als 10000€.
 
-db.subprojects.find({
-    "facility.name" : "Institut für Softwareentwicklung",
-    "funding.amount" : {$gt : 10000}
-
-});
+use('c_projects');
+db.subprojects.aggregate([
+    {
+        $match:{
+            "facility.name" : "Institut für Softwareentwicklung",
+            "funding.amount" : { $gt : 10000 }
+        }
+    }
+]);
 
 // --------------------------------------------------------------------------------------
 // -- 5.) Beispiel - Abfragen / in Operator
@@ -117,74 +117,73 @@ db.subprojects.find({
 // Finden Sie alle Projekte die sich in einem der folgenden Zustände befinden:
 // "CREATED", "IN_APPROVEMENT", "APPROVED"
 
-db.projects.find({
-    projectState : {$in : ["CREATED", "IN_APPROVEMENT", "APPROVED"]}
-    
-});
+use('c_projects');
+db.projects.aggregate([
+    {
+        $match: {
+            projectState: { $in:["CREATED", "IN_APPROVEMENT", "APPROVED"] }
+        }
+    }
+]);
 
 // --------------------------------------------------------------------------------------
-// -- 6.) Beispiel - Abfragen / where Operator
+// 6.) Beispiel - Abfragen / where Operator
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle Projekte die eine Förderung haben die höher ist als 120000.
 
+use('c_projects');
 db.projects.find({
-$where : function() {
-let amount = 0;
+    $where : function() {
+        let amount = 0;
 
-for(let funding of this.fundings) {
-amount += funding.amount;
-}
-return amount > 12000;
-}
+        for(let funding of this.fundings) {
+            amount += funding.amount;
+        }
 
+        return amount > 12000;
+    }
 });
-
 
 // b) Finden Sie alle Projekte die 2 oder mehrere Förderungen haben.
 
+use('c_projects');
 db.projects.find({
-$where : function (){
-return this.funding.length >=2;
-
-}
-
+    $where : function (){
+        return this.fundings.length >=2;
+    }
 });
-
 
 // c) Finden Sie alle Projekte die von der "TU Wien" gefördert werden.
+
+use('c_projects');
 db.projects.find({
-$where : function(){
-
-
-for(let funding of this.fundings){
-    if(fundings.debitorName = "TU Wien") {
-    return true;
-    
+    $where : function(){
+        for(let fundings of this.fundings){
+            if(fundings.debitorName = "TU Wien") {
+                return true;
+            }
+            return false;
+        }
     }
-    
-    return false;
-}
-
-}
 });
 
-
 // --------------------------------------------------------------------------------------
-// -- 7.) Beispiel - Abfragen / where Operator
+// 7.) Beispiel - Abfragen / where Operator
 // --------------------------------------------------------------------------------------
 // Finden Sie alle RESEARCH_FUNDING_PROJECT Projekte die 2 oder mehr Subprojekte haben.
 // Geben Sie für die Projekte folgende Property aus: title, projectType, projectState.
-
+//
 // Sortieren Sie das Ergebnis nach dem titel aufsteigend.
 
-
+use('c_projects');
 db.projects.find({
-
-projectType: "RESEARCH_FUNDING_PROJECT",
-$where : function(){
-
-return this.subprojects.length >= 2;
-
-}
-
-}, {title : 1, projectType : 1, projectState : 1}).sort({title : 1, });
+    projectType: "RESEARCH_FUNDING_PROJECT",
+    $where : function(){
+        return this.subprojects.length >= 2;
+    }
+}, {
+    _id : 0,
+    title : 1,
+    projectType : 1,
+    projectState : 1
+}).sort({ title : 1 });

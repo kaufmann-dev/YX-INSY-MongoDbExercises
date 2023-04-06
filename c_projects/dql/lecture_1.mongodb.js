@@ -1,38 +1,35 @@
 use('c_projects');
 
-// -- ----------------------------------------------------------------------------------------- --
-// --  1.Beispiel) aggregate
-// -- ----------------------------------------------------------------------------------------- --
-
-//  db.<collection>.aggregate([
-//      { <pipelineStep> },
-//      ...
+// -----------------------------------------------------------------------------------------
+// aggregate Syntax
+// -----------------------------------------------------------------------------------------
 //
-//  ]);
-
+// db.<collection>.aggregate([
+//     { <pipelineStep> },
+//     ...
+//
+// ]);
+//
 // <pipelineStep> : { $pipelineOperator : ... }
 //
-//  $pipelineOperator : <documentOperator> || <stuctureOperator> || <relationOperator> || <aggregatOperator>
-
-
-//  Dokumentstufen : Dokumentstufen verändern die Anzahl der Dokumente im Dokumentenstrom der
-//                   Pipeline
+// $pipelineOperator : <documentOperator> || <stuctureOperator> || <relationOperator> || <aggregatOperator>
 //
-//  <documentOperator>: $match || $sort || $unwind || $limit || $out
-
-
+//
+// Dokumentstufen : Dokumentstufen verändern die Anzahl der Dokumente im Dokumentenstrom der
+//                  Pipeline
+//
+// <documentOperator>: $match || $sort || $unwind || $limit || $out
+//
+//
 // Stukturstufen: Mit Strukturstufen kann die Struktur
-
-
-
-
-// -- ---------------------------------------------------------------------------------------- --
-// --  2.Beispiel) DocumentOperator - $match, $out
-// -- ---------------------------------------------------------------------------------------- --
+//
+// ----------------------------------------------------------------------------------------
+// 2.Beispiel) DocumentOperator - $match, $out
+// ----------------------------------------------------------------------------------------
 // Sammeln Sie alle "RESEARCH_FUNDING_PROJECT" Projekte die von der "TU Wien" gefördert werden,
 // in einer Collection projectReport.
 
-db.projects.find();
+use('c_projects');
 db.projects.aggregate([
     {
         $match : {
@@ -48,84 +45,41 @@ db.projects.aggregate([
         $out : "projectReport"
     }
 ]);
+db.projectReport.find({});
 
-// -- ---------------------------------------------------------------------------------------- --
-// --  3.Beispiel) DocumentOperator - $limit, $skip
-// -- ---------------------------------------------------------------------------------------- --
+// ----------------------------------------------------------------------------------------
+// 3.Beispiel) DocumentOperator - $limit, $skip
+// ----------------------------------------------------------------------------------------
 // Sammeln Sie Elemente 2 bis 4 Projekte in einer Collection projectReport.
 
-
-db.projects.find();
+use('c_projects');
 db.projects.aggregate([{
-    $sort : {
-        title : 1
+    $sort: {
+        title: 1
     }
-},{
-    $skip : 1
-},{
-    $limit : 3
+}, {
+    $skip: 1
+}, {
+    $limit: 3
+}, {
+    $out: "projectReport"
 }]);
+db.projectReport.find({});
 
-
-// -- ---------------------------------------------------------------------------------------- --
-// --  4.Beispiel) StrukturOperator - $project, $addFields
-// -- ---------------------------------------------------------------------------------------- --
+// ----------------------------------------------------------------------------------------
+// 4.Beispiel) StrukturOperator - $project, $addFields
+// ----------------------------------------------------------------------------------------
 // Sammeln Sie alle REQUEST_FUNDING_PROJECT bzw. RESEARCH_FUNDING_PROJECT Projekte in einer
 // Collection projectReport. Berücksichtigen Sie nur Projekte mit 2 oder mehreren subprojekten
-
+//
 // Geben Sie die folgenden Felder aus:
-//    skalare Felder:      title, projectType, projectState
-//    neue Felder:         projectDescription
-//    konstante Felder:    marked
-//    aggregierte Felder:  subprojectAmount, projectFunding, minReview, maxReview
-//    Transformationen:    subprojects (array of titles)
+//   skalare Felder:      title, projectType, projectState
+//   neue Felder:         projectDescription
+//   konstante Felder:    marked
+//   aggregierte Felder:  subprojectAmount, projectFunding, minReview, maxReview
+//   Transformationen:    subprojects (array of titles)
 
-db.projects.find();
-db.subprojects.find();
-
-db.projects.aggregate([
-    {
-        $lookup : {
-            from : "subprojects",
-            localField : "_id",
-            foreignField : "project_id",
-            as : "subprojects"
-        }
-    },
-    {
-        $match : {
-            projectType : { $in: [ "REQUEST_FUNDING_PROJECT", "RESEARCH_FUNDING_PROJECT" ] },
-            $expr : {
-                $gte : [
-                    { $size : "$subprojects" },
-                    2
-                ]
-            }
-        }
-    },
-    {
-        $project: {
-            _id: 0,
-            title : 1,
-            projectDescription : "$description",
-            projectType : 1,
-            projectState : 1,
-            subprojectAmount : {
-                $size : "$subprojects"
-            },
-            projectFunding : {
-                $sum : "$fundings.amount"
-            },
-            subprojects : "$subprojects.title"
-        }
-    },
-    {
-        $out: "projectReport"
-    }
-])
-
-
-db.projects.find({});
+use('c_projects');
 db.projects.aggregate([{
     $match : {
         projectType : { $in: [ "REQUEST_FUNDING_PROJECT", "RESEARCH_FUNDING_PROJECT" ] }
@@ -153,64 +107,16 @@ db.projects.aggregate([{
         marked : true
     }
 }]);
+db.projectReport.find({});
 
-
-// -- ---------------------------------------------------------------------------------------- --
-// --  5.Beispiel) StrukturOperator - $lookup, $unwind, $addFields
-// -- ---------------------------------------------------------------------------------------- --
+// ----------------------------------------------------------------------------------------
+// 5.Beispiel) StrukturOperator - $lookup, $unwind, $addFields
+// ----------------------------------------------------------------------------------------
 // Sammeln Sie folgenden Daten für Subprojekte in einer Collection subprojectReports.
+//
+// subprojectTitle, projectTitle, facility, median, researchValues, subprojectFunding, projectFunding
 
-// subprojectTitle, projectTitle, facility, median, researchValues, subprojectFunding,
-// projectFunding
-
-db.projects.find();
-db.subprojects.find();
-db.subprojects.aggregate([
-    {
-        $lookup : {
-            from : "projects",
-            localField : "project_id",
-            foreignField : "_id",
-            as : "project"
-        }
-    },
-    {
-        $unwind : "$project"
-    },
-    {
-        $project: {
-            _id: 0,
-            subprojectTitle : "$title",
-            projectTitle : "$project.title",
-            facility : 1,
-            median : 1,
-            researchValues : 1,
-            subprojectFunding : "$funding.amount",
-            projectFunding : {
-                $sum : "$project.fundings.amount"
-            }
-        }
-    }
-])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-db.projects.find({});
-db.subprojects.find({});
+use('c_projects');
 db.subprojects.aggregate([
 {
     $lookup : {
@@ -231,75 +137,52 @@ db.subprojects.aggregate([
             $sum : "$project.fundings.amount"
         }
     }
+}, {
+    $out : "subprojectReports"
 }]);
+db.subprojectReports.find({});
 
-
-// -- ---------------------------------------------------------------------------------------- --
-// --  7.Beispiel) Aggregatoperatoren: $group
-// -- ---------------------------------------------------------------------------------------- --
+// ----------------------------------------------------------------------------------------
+// 7.Beispiel) Aggregatoperatoren: $group
+// ----------------------------------------------------------------------------------------
 // Ermitteln Sie welchem Projekttyp wieviele Projektdokumente zugeordnet sind. Speichern Sie
 // die Daten in der projectReport Collection. Speichern Sie ebenfalls die Titel der den
 // Projekttypen zugeordneten Dokumente.
 
-
-
-
-db.projects.find({});
+use('c_projects');
 db.projects.aggregate([
     {
         $group: {
-          _id: "$projectType",
-          projectCount : { $sum : 1 },
-          titles : {
-            $push : "$title"
-          }
+            _id: "$projectType",
+            projectCount : { $sum : 1 },
+            projects : {
+                $push : "$title"
+            }
         }
-    }
-])
-
-
-
-
-
-
-
-
-db.projects.find();
-db.projects.aggregate([{
-    $group : {
-        _id : "$projectType",
-        projectCount : {
-            $sum : 1
-        },
-        titles : {
-            $push : "$title"
-        }
-    }
-}]);
-
-
-
-
-// -- ---------------------------------------------------------------------------------------- --
-// --  8.Beispiel) Aggregatoperatoren: $bucket
-// -- ---------------------------------------------------------------------------------------- --
-// Bilden Sie für die projects Collection folgende Buckets. Speichern Sie pro Bucket folgende
-// Daten: fundingAmount, title
-
-// $bucket:   projectFunding:     0 - 20.000    20.001 - 50.000
-
-db.projects.find({});
-db.projects.aggregate([
+    },
     {
         $project: {
             _id : 0,
-            fundingAmount : {
-                $sum : "$fundings.amount"
-            },
-            title : 1
+            projectType : "$_id",
+            projectCount : 1,
+            projects : 1
         }
+    },
+    {
+        $out : "projectReport"
     }
 ])
+db.projectReport.find({});
+
+// ----------------------------------------------------------------------------------------
+// 8.Beispiel) Aggregatoperatoren: $bucket
+// ----------------------------------------------------------------------------------------
+// Bilden Sie für die projects Collection folgende Buckets. Speichern Sie pro Bucket folgende
+// Daten: fundingAmount, title
+//
+// $bucket:   projectFunding:     0 - 20.000    20.001 - 50.000
+
+use('c_projects');
 db.projects.aggregate([
     {
         $addFields : {
@@ -311,8 +194,8 @@ db.projects.aggregate([
     {
         $bucket : {
             groupBy : "$fundingAmount",
-            boundaries : [ 1, 20000, 50000 ],
-            default : 0,
+            boundaries : [ 20000, 50000 ],
+            default : "more",
             output: {
                 "count" : {
                     $sum : 1
