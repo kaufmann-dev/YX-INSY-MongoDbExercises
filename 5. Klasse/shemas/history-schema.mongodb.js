@@ -1,6 +1,9 @@
-//-- ------------------------------------------------------------------------------------ --
+use('c_insy');
+
+// -- ------------------------------------------------------------------------------------ --
 // --    Collection: personalities
 // -- ----------------------------------------------------------------------------------- --
+
 db.getCollection("personalities").drop();
 
 var person =   {
@@ -35,7 +38,6 @@ var person =   {
 };
 
 
-use insy;
 db.createCollection(
    "personalities", {
         validationLevel  : "strict",
@@ -394,7 +396,6 @@ db.getCollection("personalities").insertMany([
 
 db.getCollection("events").drop();
 
-use insy;
 db.createCollection(
     "events", {
         validationLevel  : "strict",
