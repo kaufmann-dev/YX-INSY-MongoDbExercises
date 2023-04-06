@@ -197,18 +197,71 @@ db.projects.aggregate([
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle Projekte die eine Förderung haben die höher ist als 120000.
 
+db.projects.find();
+db.projects.aggregate([
+    {
+        $addFields: {
+            fam : { $sum : "$fundings.amount"}
+        }
+    },
+    {
+        $match: {
+            fam : { $gt : 120000 }
+        }
+    }
+])
 
+db.projects.aggregate([
+    {
+        $match: {
+            $expr : {
+                $gt: [
+                    { $sum : "$fundings.amount"},
+                    120000
+                ]
+            }
+        }
+    }
+])
 
 
 // b) Finden Sie alle Projekte die 2 oder mehrere Förderungen haben.
 
+db.projects.find();
 
+db.projects.aggregate([
+    {
+      $addFields: {
+        numSponsored: {
+          $sum: {
+            $cond: [
+              { $in: [true, ["$isFWFSponsered", "$isFFGSponsered", "$isEUSponsered"]] },
+              1,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        numSponsored: { $gte: 2 }
+      }
+    }
+  ])
 
 
 // c) Finden Sie alle Projekte die von der "TU Wien" gefördert werden.
 
 
-
+db.projects.find();
+db.projects.aggregate([
+    {
+        $match : {
+            "fundings.debitorName" : "TU Wien"
+        }
+    }
+])
 
 // --------------------------------------------------------------------------------------
 // -- 7.) Beispiel - Abfragen / where Operator
@@ -217,3 +270,40 @@ db.projects.aggregate([
 // Geben Sie für die Projekte folgende Property aus: title, projectType, projectState.
 
 // Sortieren Sie das Ergebnis nach dem titel aufsteigend.
+
+db.projects.find();
+db.subprojects.find();
+db.projects.aggregate([
+    {
+        $lookup : {
+            from: "subprojects",
+            localField: "_id",
+            foreignField: "project_id",
+            as: "subprojects"
+        }
+    },
+    {
+        $match: {
+            projectType: "RESEARCH_FUNDING_PROJECT",
+            $expr : {
+                $gte : [
+                    { $size: "$subprojects" },
+                    2
+                ]
+            }
+        }
+    },
+    {
+        $sort: {
+            title: 1
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            title: 1,
+            projectType: 1,
+            projectState: 1,
+        }
+    }
+])

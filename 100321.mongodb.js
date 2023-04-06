@@ -1,3 +1,5 @@
+use('c_insy');
+
 db.events.find({});
 db.events.find({}).count();
 

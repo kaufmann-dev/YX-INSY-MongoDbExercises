@@ -1,4 +1,4 @@
- use (insy);
+use("c_insy");
 
 // -- --------------------------------------------------------------------------------------------- --
 // --    Collection: events
@@ -566,3 +566,5 @@ db.getCollection("events").insertMany([
          ]
      }
 ]);
+
+db.events.find();
