@@ -76,9 +76,3 @@ db.createCollection("creatures",{
         }
     }
 });
-
-
-
-
-
-
