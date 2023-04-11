@@ -42,5 +42,21 @@ db.lw1.aggregate([
     },
     {
       $limit: 1
+    },
+    {
+        $lookup: {
+          from: "lw1",
+          localField: "_id",
+          foreignField: "_id",
+          as: "result"
+        }
+    },
+    {
+        $unwind : "$result"
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$result"
+        }
     }
 ])

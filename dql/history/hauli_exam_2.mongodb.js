@@ -1,4 +1,4 @@
-use('c_history');
+// use('_');;
 
 
 // -- ------------------------------------------------------------------------- -- 
@@ -10,9 +10,11 @@ use('c_history');
 // Geben Sie folgende Felder aus: name, description. Sortieren Sie das Ergebnis 
 // nach dem Namen aufsteigend.
 
+// use('_');;
+db.personalities.find({});
 db.personalities.find({
   "birth.cat" : {$in:["BC"]},
-  "birth.location" : {$in:["Europe", "Asia"]}
+  "birth.continent" : {$in:["EUROPE", "ASIA"]}
 }).sort({name : 1});
 
 
@@ -25,6 +27,7 @@ db.personalities.find({
 //
 // Hinweis: Sie können die Zeitgrenzen für die Auswertung einrechnen.
 
+// use('_');;
 db.personalities.find({
   $or:[
     {$and: [
@@ -50,6 +53,7 @@ db.personalities.find({
 // Finden Sie alle Persönlichkeiten die weder in Amerika (AMERICA) noch in Afrika
 // (AFRICA) geboren wurden. Die Person (keywords) muss General (General) sein.
 
+// use('_');;
 db.personalities.find({
   "birth.continent" : {
     $in : ["AMERICA", "AFRICA"]
@@ -72,6 +76,7 @@ db.personalities.find({
 //
 //          z.B.: db.<collection>.find({ <field> : { $exists : true }}
 
+// use('_');;
 db.personalities.find({
   "birth.continent" : "EUROPE",
   "death" : {

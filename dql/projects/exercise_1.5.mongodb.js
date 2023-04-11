@@ -23,6 +23,21 @@ use('c_projects');
 // 2.) Beispiel - Abfragen
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle REQUEST_FUNDING_PROJECT Projekte.
+use('c_projects');
+db.projects.find({});
+db.projects.aggregate([
+    {
+        $match: {
+            projectType : "REQUEST_FUNDING_PROJECT"
+        }
+    }
+])
+
+
+
+
+
+
 
 use('c_projects');
 db.getCollection("projects").find({
@@ -32,6 +47,24 @@ db.getCollection("projects").find({
 });
 
 // b) Finden Sie alle Projekte die vom FWF und von der FFG gesponsert werden.
+
+
+
+
+
+
+use('c_projects');
+db.projects.aggregate([
+    {
+        $match : {
+            isFWFSponsered : true,
+            isFFGSponsered : true
+        }
+    }
+])
+
+
+
 
 use('c_projects');
 db.getCollection("projects").find({
@@ -45,6 +78,20 @@ db.getCollection("projects").find({
 //    "RESEARCH_FUNDING_PROJECT" Projekte sind.
 
 use('c_projects');
+db.projects.aggregate([
+    {
+        $match : {
+            $nor : [
+                { projectType : "REQUEST_FUNDING_PROJECT" },
+                { projectType : "RESEARCH_FUNDING_PROJECT" }
+            ]
+        }
+    }
+])
+
+
+
+use('c_projects');
 db.getCollection("projects").find({
     $nor : [
         {projectType : {$eq : "REQUEST_FUNDING_PROJECT"}},
@@ -54,6 +101,21 @@ db.getCollection("projects").find({
 
 // d) Finden Sie alle Projekte die einen der folgenden Projekttypen haben: REQUEST_FUNDING_PROJECT
 //    RESEARCH_FUNDING_PROJECT
+
+
+use('c_projects');
+db.projects.aggregate([
+    {
+        $match: {
+            $or : [
+                { projectType : "REQUEST_FUNDING_PROJECT" },
+                { projectType : "RESEARCH_FUNDING_PROJECT" }
+            ]
+        }
+    }
+])
+
+
 
 use('c_projects');
 db.getCollection("projects").find({
@@ -69,6 +131,7 @@ db.getCollection("projects").find({
 // a) Finden Sie alle REQUEST_FUNDING_PROJECT Projekte.
 //
 // Kurzform: $and Operator
+
 
 use('c_projects');
 db.getCollection("projects").find({
@@ -88,6 +151,18 @@ db.getCollection("projects").find({
 // c) Finden Sie alle Subprojekte die einen appliedResearch Wert haben zwischen 50 und 100
 
 use('c_projects');
+db.subprojects.aggregate([
+    {
+        $match: {
+            $and : [
+                { appliedResearch : { $gte : 50 } },
+                { appliedResearch : { $lte : 100}}
+            ]
+        }
+    }
+])
+
+use('c_projects');
 db.getCollection("subprojects").find({
     $and: [
         { appliedResearch: { $gte: 50 } },
@@ -100,6 +175,17 @@ db.getCollection("subprojects").find({
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle Subprojekte die am Institut für Softwareentwicklung durchgeführt
 //    werden und einen Förderung haben die höher ist als 10000€.
+
+use('c_projects');
+db.subprojects.find({});
+db.subprojects.aggregate([
+    {
+        $match: {
+          "facility.name" : "Institut für Softwareentwicklung",
+          "funding.amount" : {$gte:10000}
+        }
+    }
+])
 
 use('c_projects');
 db.subprojects.aggregate([
@@ -117,6 +203,19 @@ db.subprojects.aggregate([
 // Finden Sie alle Projekte die sich in einem der folgenden Zustände befinden:
 // "CREATED", "IN_APPROVEMENT", "APPROVED"
 
+
+use('c_projects');
+db.projects.find({});
+db.projects.aggregate([
+    {
+        $match: {
+          "projectState" : {
+            $in : ["CREATED", "IN_APPROVEMENT", "APPROVED"]
+          }
+        }
+    }
+])
+
 use('c_projects');
 db.projects.aggregate([
     {
@@ -132,19 +231,62 @@ db.projects.aggregate([
 // a) Finden Sie alle Projekte die eine Förderung haben die höher ist als 120000.
 
 use('c_projects');
-db.projects.find({
-    $where : function() {
-        let amount = 0;
-
-        for(let funding of this.fundings) {
-            amount += funding.amount;
-        }
-
-        return amount > 12000;
+db.projects.aggregate([
+  {
+    $unwind: "$fundings"
+  },
+  {
+    $group: {
+      _id: "$_id",
+      fundingAmount: {
+        $sum : "$fundings.amount"
+      }
     }
-});
+  },
+  {
+    $match: {
+      fundingAmount: { $gt: 12000 }
+    }
+  }
+]);
 
 // b) Finden Sie alle Projekte die 2 oder mehrere Förderungen haben.
+
+
+
+use ("c_projects");
+db.projects.aggregate([
+    {
+        $match : {
+            $expr : {
+                $gte : [
+                    {
+                        $add : [
+                            { $toInt : { $cond : [ "$isFWFSponsered", 1, 0 ] } },
+                            { $toInt : { $cond : [ "$isFFGSponsered", 1, 0 ] } },
+                            { $toInt : { $cond : [ "$isEUSponsered", 1, 0 ] } }
+                        ]
+                    },
+                    2
+                ]
+            }
+        }
+    }
+  ])
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 use('c_projects');
 db.projects.find({

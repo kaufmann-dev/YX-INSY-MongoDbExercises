@@ -1,5 +1,5 @@
 // USE SPECIFIC DATABASE
-use('c_insy');
+// use('_');
 
 // FIND SYNTAX
 db.getCollection("events").find({});
