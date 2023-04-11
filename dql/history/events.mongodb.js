@@ -1,155 +1,4 @@
- // -- --------------------------------------------------------------------------------- --
-// --  1.Beispiel) Aggregationsframework: $match, $project, $sort, $out (1.Punkt)
-// -- --------------------------------------------------------------------------------- --
-// Sammeln Sie die folgenden Eventdaten in der "eventsReport" Collection. Berücksichtigen
-// Sie nur Battles.
-
-
-// Ausgabe: eventName, battleVictor, description
-
-// @eventName     -> name
-// @battelVictor  -> victor
-// @description   -> description
-
-// Sortieren Sie das Ergebnis nach dem Eventnamen aufsteigend.
-// Übernehmen Sie nur die ersten 2 Dokumente.
-
-
-// Hinweis: Prüfung ob das review Array Elemente hat:
-
-db.events.find({});
-
-db.events.aggregate([
-    {
-        $match : {
-            eventType : "BATTLE"
-        }
-    },
-    {
-        $project : {
-            eventName : "$name",
-            battleVictor : "$victor",
-            description : "$description"
-        }
-    },
-    {
-        $sort : {
-            eventName : 1
-        }
-    },
-    {
-        $limit : 2
-    },
-    {
-        $out : "eventsReport"
-    }
-]);
-
-// -- --------------------------------------------------------------------------------- --
-// --  2.Beispiel) Aggregationsframework - $group, $out                     (1.Punkt)
-// -- --------------------------------------------------------------------------------- --
-// Geben Sie für jeden eventType folgende Werte aus. Speichern Sie Ihr Ergebnis in einer
-// Collection eventReport
-
-// {
-//    "_id" : "BATTLE",
-//    "documentCount" : ..., @Anzahl der Dokumente für den eventType
-//    "eventNames" : [
-//        {
-//            "name" : "Battle of ...",
-//            "victor" : "..."
-//        }, ...
-//     ]
-//  }
-
-db.events.find({});
-
-db.events.aggregate([
-    {
-        $group: {
-            _id: "$eventType",
-            documentCount : {
-                $sum : 1
-            },
-            eventNames : {
-                $addToSet : {
-                    name : "$name",
-                    victor : "$victor"
-                }
-            }
-        }
-    }
-]);
-
-// -- --------------------------------------------------------------------------------- --
-// --  3.Beispiel) Aggregationsframework - $match, $unwind, $addFields, $group, $lookup
-// --                                    - $project, $out
-// --  (3.Punkte)
-// -- --------------------------------------------------------------------------------- --
-
-// Sammeln Sie für events die folgenden Daten in der eventReport collection. Berück-
-// sichtigen Sie nur BATTLE eventTypes.
-//
-// eventType, description, territorialChange, belligerents
-//
-// @name        -> name
-// @eventType   -> eventType
-// @description -> description
-// @territorialChange -> territorialChange
-// @belligerents : [{
-//     commander : "...",
-//     nation : "...",
-//     troopCount : -> $sum composition.amount
-//     troopTypes : ["...", "..."]
-//     lossCount  : -> $sum losses.amount
-// }]
-
-
-// Hinweis: Zur Berechung der Werte der gegnerischen Seiten (belligerents)
-//          sollte eine "$unwind" auf dem Array durchgeführt werden.
-
-db.events.find({});
-
-db.events.aggregate([
-    {
-        $match : {
-            eventType : "BATTLE"
-        }
-    },
-    {
-        $addFields : {
-            newBelligerents : {
-                $map: {
-                    input: "$belligerents",
-                    as: "belligerent",
-                    in: {
-                        commander : "$$belligerent.commander",
-                        nation : "$$belligerent.nation",
-                    	troopCount : {
-                    	    $sum : "$$belligerent.composition.amount"
-                    	},
-                    	troopTypes : "$$belligerent.composition.type",
-                    	lossCount : {
-                    	    $sum : "$$belligerent.losses.amount"
-                    	}
-                    }
-                }
-            }
-        }
-    },
-    {
-        $project : {
-            name : "$name",
-            eventType : "$eventType",
-            description : "$description",
-            territorialChange : "$territorialChange",
-            newBelligerents : 1
-        }
-    }
-]);
-
 // Welche Person war am längsten an der Macht als Prozent seiner Lebensjahre?
-db.personalities.find()
 
 db.personalities.aggregate([
     {
@@ -214,8 +63,127 @@ db.personalities.aggregate([
     }
 ]);
 
-// $mergeObjects:
-db.personalities.find();
+db.personalities.aggregate([
+    {
+        $project: {
+          name : 1,
+          ruling : {
+            $sum : "$events.duration"
+          },
+          lifespan : {
+            $switch : {
+                branches : [
+                    {
+                        case: {
+                            $and : [
+                                {
+                                    $eq : [ "$birth.cat", "BC" ]
+                                },
+                                {
+                                    $eq : [ "$death.cat", "BC" ]
+                                }
+                            ]
+                            
+                        },
+                        then : {
+                            $subtract : [ "$birth.year", "$death.year" ]
+                        }
+                    },
+                    {
+                        case : {
+                            $and : [
+                                {
+                                    $eq : [ "$birth.cat", "AC" ]
+                                },
+                                {
+                                    $eq : [ "$death.cat", "AC" ]
+                                }
+                            ]
+                        },
+                        then : {
+                            $subtract : [ "$death.year", "$birth.year" ]
+                        }
+                    },
+                    {
+                        case : {
+                            $eq : [ "$death.cat", "AC" ]
+                        },
+                        then : {
+                            $add : [ "$death.year", "$birth.year" ]
+                        }
+                    },
+                    {
+                        case : {
+                            $eq : [ "$birth.cat", "AC" ]
+                        },
+                        then : {
+                            $subtract : [ "$birth.year", "$death.year" ]
+                        }
+                    }
+                ],
+                default : "unknown"
+            }
+          }
+        }
+    },
+    {
+        $project: {
+          name : 1,
+          percentRuled : {
+            $cond : {
+                if : {
+                    $or : [
+                        {$eq : ["$ruling", 0]},
+                        {$eq : ["$lifespan", "unknown"]}
+                    ]
+                    
+                },
+                then : 0,
+                else : {
+                    $round : [
+                        {
+                            $multiply : [
+                                {
+                                    $divide : [
+                                        "$ruling",
+                                        "$lifespan"
+                                    ]
+                                },
+                                100
+                            ]
+                        },
+                        0
+                    ]
+                    
+                }
+            }
+            
+          }
+        }
+    },
+    {
+        $group: {
+          _id: "$percentRuled",
+            field2 : {
+                $push :  "$$ROOT"
+                
+            }
+        }
+    },
+    {
+        $limit : 1
+    },
+    {
+        $unwind : "$field2"
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$field2"
+        }
+    }
+]);
+
+// $mergeObjects
 
 db.personalities.aggregate([
     {
@@ -233,7 +201,8 @@ db.personalities.aggregate([
     }
 ]);
 
-//Welche Person war am längsten an der Macht als Prozent seiner Lebensjahre?
+// Welche Person war am längsten an der Macht als Prozent seiner Lebensjahre?
+
 db.personalities.aggregate([
     {
         $match : {
@@ -303,7 +272,6 @@ db.personalities.aggregate([
 ]);
 
 //Gib die Person aus, die am längsten geherrscht hat und einen corruption Wert von gt 1 hat
-db.personalities.find()
 
 db.personalities.aggregate([
     {
@@ -358,35 +326,6 @@ db.personalities.aggregate([
     }
 ]);
 
-// -- ----------------------------------------------------------------- --
-// --  2.) Beispiel
-// -- ----------------------------------------------------------------- --
-// Für Commander (collection commander) soll ein Report verfaßt werden.
-// Einem Commander werden dabei für bestimmte Aspekte Punkte zugeordnet.
-
-// I) Berechnen Sie für jeden Commander einen influenceCount. Der Wert
-//    für influenceCount setzt sich dabei aus folgenden Posten zusammen:
-
-//    * victories -> $victoryCount * 50
-//    * battleParticipation -> $(battle count) * 2
-//    * troopCount -> ($(overall Troopcount) / $(battle count))/1000
-
-// II) Geben Sie für jeden Commander die folgenden Felder aus. Speichern
-//     Sie Ihr Ergebnis in einer collection commanderReport.
-
-//     var commander = {
-//          name : "",
-//          nation : "",
-//          influenceCount : ...
-//     }
-
-db.commander.find({});
-
-db.commander.aggregate([
-
-]);
-
-
 // 2) Beispiel (einfaches Beispiel)
 
 // schema: personalities
@@ -395,9 +334,44 @@ db.commander.aggregate([
 
 // "{title=King of Macedon, duration=16,
 // person=Alexander III of Macedon
- //}"
+//}"
 
- db.personalities.find()
+db.personalities.aggregate([
+    {
+        $unwind : "$events"
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$events"
+        }
+    },
+    {
+        $group: {
+          _id: null,
+          maxDuration : {
+            $max : "$duration"
+          },
+          events : {
+            $addToSet : "$$ROOT"
+          }
+        }
+    },
+    {
+        $unwind : "$events"
+    },
+    {
+        $match : {
+            $expr : {
+                $eq : ["$maxDuration", "$events.duration"]
+            }
+        }
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$events"
+        }
+    }
+]);
 
  db.personalities.aggregate([
     {
@@ -443,7 +417,62 @@ db.commander.aggregate([
             newRoot : "$events"
         }
     }
- ]);
+]);
+
+ db.personalities.aggregate([
+    {
+        $addFields : {
+            events : {
+                $map: {
+                    input: "$events",
+                    as: "event",
+                    in: {
+                    	$mergeObjects: [ "$$event", {fullName : "$fullName" }]
+                    }
+                }
+            }
+        }
+    },
+    {
+        $unwind : "$events"
+    },
+    {
+        $group: {
+            _id: null,
+            maxDuration : {
+                $max : "$events.duration"
+            },
+            events : {
+                $addToSet : {
+                    title : "$events.title",
+                    duration : "$events.duration",
+                    fullName : "$fullName"
+                }
+            }
+        }
+    },
+    {
+        $addFields : {
+            events : {
+                $filter: {
+                    input: "$events",
+                    as: "event",
+                    cond: {
+                    	$eq : ["$$event.duration", "$maxDuration"]
+                    }
+                }
+            }
+        }
+    },
+    {
+        $unwind : "$events"
+    },
+    {
+        $replaceRoot : {
+            newRoot : "$events"
+        }
+    }
+]);
 
 // 1) Beispiel (komplexes Beispiel)
 
@@ -457,8 +486,6 @@ db.commander.aggregate([
 //    battles=[
 //        Siege of Vienna II, Battle of Kursk, Battle of Gaugamela, Battle of the Granicus River, Siege of Vienna I, Siege of Vienna I, Battle of Agincourt, Battle of Kursk, Battle of Agincourt, Battle of Issus, Siege of Vienna II]
 // }
-
-db.events.find()
 
 db.events.aggregate([
     {
@@ -534,65 +561,6 @@ db.events.aggregate([
         }
     }
 ]);
-
-db.personalities.find()
-
-db.personalities.aggregate([
-    {
-        $addFields : {
-            events : {
-                $map: {
-                    input: "$events",
-                    as: "event",
-                    in: {
-                    	$mergeObjects: [ "$$event", {fullName : "$fullName" }]
-                    }
-                }
-            }
-        }
-    },
-    {
-        $unwind : "$events"
-    },
-    {
-        $group: {
-            _id: null,
-            maxDuration : {
-                $max : "$events.duration"
-            },
-            events : {
-                $addToSet : {
-                    title : "$events.title",
-                    duration : "$events.duration",
-                    fullName : "$fullName"
-                }
-            }
-        }
-    },
-    {
-        $addFields : {
-            events : {
-                $filter: {
-                    input: "$events",
-                    as: "event",
-                    cond: {
-                    	$eq : ["$$event.duration", "$maxDuration"]
-                    }
-                }
-            }
-        }
-    },
-    {
-        $unwind : "$events"
-    },
-    {
-        $replaceRoot : {
-            newRoot : "$events"
-        }
-    }
-]);
-
-db.events.find()
 
 db.events.aggregate([
     {
@@ -671,7 +639,64 @@ db.events.aggregate([
 
 //Gib die Nation aus, die die meisten Verluste gemacht hat
 
-db.events.find()
+db.events.aggregate([
+    {
+        $unwind : "$belligerents"
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$belligerents"
+        }
+    },
+    {
+        $project: {
+          nation : 1,
+          losses : {
+            amount : "$losses.amount"
+          }
+        }
+    },
+    {
+        $unwind : "$losses"
+    },
+    {
+        $unwind : "$losses.amount"
+    },
+    {
+        $group: {
+          _id: "$nation",
+          lossAmount: {
+            $sum : "$losses.amount"
+          }
+        }
+    },
+    {
+        $group: {
+          _id: null,
+          maxLossCount : {
+            $max : "$lossAmount"
+          },
+          countries : {
+            $addToSet : "$$ROOT"
+          }
+        }
+    },
+    {
+        $unwind : "$countries"
+    },
+    {
+        $match: {
+          $expr : {
+            $eq : [ "$maxLossCount", "$countries.lossAmount" ]
+          }
+        }
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$countries"
+        }
+    }
+]);
 
 db.events.aggregate([
     {

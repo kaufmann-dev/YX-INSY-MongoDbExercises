@@ -1,4 +1,4 @@
-// use('_');
+
 // wie viele subprojekte für projekt
 db.projects.aggregate([
     {
@@ -33,7 +33,7 @@ db.projects.aggregate([
 
 
 
-// use('_');
+
 
 // ////////////////////////////////////////////////////////////////////// -
 // 1. Beispiel: Subselect (1.Punkt)

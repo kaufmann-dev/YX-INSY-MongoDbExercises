@@ -4,7 +4,7 @@
   - The document's full name includes "philosoph".
   - The document's birth location is not "Europe" or "America". */
 
-// use('_');;
+
 db.personalities.find();
 db.personalities.find({
   $where : function() {

@@ -1,4 +1,4 @@
-// use('_');
+
 
 // -- ----------------------------------------------------------------------------------------- --
 // --  1.Beispiel) aggregate Framework
@@ -21,7 +21,7 @@
 //       ]
 //  };
 
-// use('_');
+
 db.facilities.aggregate([
   {
     $lookup : {
@@ -73,7 +73,7 @@ db.facilityReport.find({});
 // Finden Sie das Projekt mit der höchsten Projektförderung. Geben Sie die folgenden Felder aus:
 // title, projectType, projectState, projectFunding
 
-// use('_');
+
 db.projects.aggregate([
   {
     $group: {
@@ -177,7 +177,7 @@ db.projects.aggregate([
 // Syntax: arithmetic operator :   $op : ["", ""]
 // Syntax: comparison operator :   $op : ["", ""]
 
-// use('_');
+
 db.projects.aggregate([
   {
     $lookup : {
@@ -253,7 +253,7 @@ db.projects.aggregate([
 //             cond : { $op : [....] }
 //          }
 
-// use('_');
+
 db.projects.aggregate([
   {
     $project: {
