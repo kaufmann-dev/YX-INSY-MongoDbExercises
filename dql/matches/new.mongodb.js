@@ -50,7 +50,7 @@ db.matches.aggregate([
     }
 ]);
 
-use ('insy');
+// use ('_');
 
 //Berechnen Sie das Match, bei dem die meisten Tore gefallen sind
 
