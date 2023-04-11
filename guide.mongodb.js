@@ -1,5 +1,5 @@
 // USE SPECIFIC DATABASE
-// use('_');
+use('test');
 
 // FIND SYNTAX
 db.getCollection("events").find({});
@@ -29,3 +29,10 @@ db.getCollection("events").updateMany({
         "newTestP38" : "contentP83"
     }
 });
+
+// copy collection into different database
+
+// open mongo shell
+// cd /home
+// mongodump -d some_database -c some_collection
+// mongorestore -d some_other_db -c some_or_other_collection dump some_collection.bson
