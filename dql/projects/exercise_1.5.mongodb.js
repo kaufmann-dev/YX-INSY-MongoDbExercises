@@ -1,4 +1,4 @@
-use('c_projects');
+// use('_');
 
 // --------------------------------------------------------------------------------------
 // Abfragen Syntax
@@ -23,7 +23,7 @@ use('c_projects');
 // 2.) Beispiel - Abfragen
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle REQUEST_FUNDING_PROJECT Projekte.
-use('c_projects');
+// use('_');
 db.projects.find({});
 db.projects.aggregate([
     {
@@ -39,7 +39,7 @@ db.projects.aggregate([
 
 
 
-use('c_projects');
+// use('_');
 db.getCollection("projects").find({
     $and : [
         {    projectType : { $eq: "REQUEST_FUNDING_PROJECT"}}
@@ -53,7 +53,7 @@ db.getCollection("projects").find({
 
 
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
     {
         $match : {
@@ -66,7 +66,7 @@ db.projects.aggregate([
 
 
 
-use('c_projects');
+// use('_');
 db.getCollection("projects").find({
     $and : [
         { isFWFSponsered : {$eq : true} },
@@ -77,7 +77,7 @@ db.getCollection("projects").find({
 // c) Finden Sie alle Projekte aus die weder "REQUEST_FUNDING_PROJECT" Projekte noch
 //    "RESEARCH_FUNDING_PROJECT" Projekte sind.
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
     {
         $match : {
@@ -91,7 +91,7 @@ db.projects.aggregate([
 
 
 
-use('c_projects');
+// use('_');
 db.getCollection("projects").find({
     $nor : [
         {projectType : {$eq : "REQUEST_FUNDING_PROJECT"}},
@@ -103,7 +103,7 @@ db.getCollection("projects").find({
 //    RESEARCH_FUNDING_PROJECT
 
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
     {
         $match: {
@@ -117,7 +117,7 @@ db.projects.aggregate([
 
 
 
-use('c_projects');
+// use('_');
 db.getCollection("projects").find({
     $or : [
         {projectType : {$eq : "REQUEST_FUNDING_PROJECT"}},
@@ -133,14 +133,14 @@ db.getCollection("projects").find({
 // Kurzform: $and Operator
 
 
-use('c_projects');
+// use('_');
 db.getCollection("projects").find({
     projectType: { $eq: "REQUEST_FUNDING_PROJECT" }
 });
 
 // b) Finden Sie alle Projekte die vom FWF und von der FFG gesponsert werden.
 
-use('c_projects');
+// use('_');
 db.getCollection("projects").find({
     $and: [
         { isFFGSponsered: { $eq: true } },
@@ -150,7 +150,7 @@ db.getCollection("projects").find({
 
 // c) Finden Sie alle Subprojekte die einen appliedResearch Wert haben zwischen 50 und 100
 
-use('c_projects');
+// use('_');
 db.subprojects.aggregate([
     {
         $match: {
@@ -162,7 +162,7 @@ db.subprojects.aggregate([
     }
 ])
 
-use('c_projects');
+// use('_');
 db.getCollection("subprojects").find({
     $and: [
         { appliedResearch: { $gte: 50 } },
@@ -176,7 +176,7 @@ db.getCollection("subprojects").find({
 // a) Finden Sie alle Subprojekte die am Institut für Softwareentwicklung durchgeführt
 //    werden und einen Förderung haben die höher ist als 10000€.
 
-use('c_projects');
+// use('_');
 db.subprojects.find({});
 db.subprojects.aggregate([
     {
@@ -187,7 +187,7 @@ db.subprojects.aggregate([
     }
 ])
 
-use('c_projects');
+// use('_');
 db.subprojects.aggregate([
     {
         $match:{
@@ -204,7 +204,7 @@ db.subprojects.aggregate([
 // "CREATED", "IN_APPROVEMENT", "APPROVED"
 
 
-use('c_projects');
+// use('_');
 db.projects.find({});
 db.projects.aggregate([
     {
@@ -216,7 +216,7 @@ db.projects.aggregate([
     }
 ])
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
     {
         $match: {
@@ -230,7 +230,7 @@ db.projects.aggregate([
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle Projekte die eine Förderung haben die höher ist als 120000.
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
   {
     $unwind: "$fundings"
@@ -288,7 +288,7 @@ db.projects.aggregate([
 
 
 
-use('c_projects');
+// use('_');
 db.projects.find({
     $where : function (){
         return this.fundings.length >=2;
@@ -297,7 +297,7 @@ db.projects.find({
 
 // c) Finden Sie alle Projekte die von der "TU Wien" gefördert werden.
 
-use('c_projects');
+// use('_');
 db.projects.find({
     $where : function(){
         for(let fundings of this.fundings){
@@ -317,7 +317,7 @@ db.projects.find({
 //
 // Sortieren Sie das Ergebnis nach dem titel aufsteigend.
 
-use('c_projects');
+// use('_');
 db.projects.find({
     projectType: "RESEARCH_FUNDING_PROJECT",
     $where : function(){

@@ -1,4 +1,4 @@
-use('c_projects');
+// use('_');
 
 // -----------------------------------------------------------------------------------------
 // aggregate Syntax
@@ -29,7 +29,7 @@ use('c_projects');
 // Sammeln Sie alle "RESEARCH_FUNDING_PROJECT" Projekte die von der "TU Wien" gefördert werden,
 // in einer Collection projectReport.
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
     {
         $match : {
@@ -52,7 +52,7 @@ db.projectReport.find({});
 // ----------------------------------------------------------------------------------------
 // Sammeln Sie Elemente 2 bis 4 Projekte in einer Collection projectReport.
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([{
     $sort: {
         title: 1
@@ -79,7 +79,7 @@ db.projectReport.find({});
 //   aggregierte Felder:  subprojectAmount, projectFunding, minReview, maxReview
 //   Transformationen:    subprojects (array of titles)
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([{
     $match : {
         projectType : { $in: [ "REQUEST_FUNDING_PROJECT", "RESEARCH_FUNDING_PROJECT" ] }
@@ -116,7 +116,7 @@ db.projectReport.find({});
 //
 // subprojectTitle, projectTitle, facility, median, researchValues, subprojectFunding, projectFunding
 
-use('c_projects');
+// use('_');
 db.subprojects.aggregate([
 {
     $lookup : {
@@ -149,7 +149,7 @@ db.subprojectReports.find({});
 // die Daten in der projectReport Collection. Speichern Sie ebenfalls die Titel der den
 // Projekttypen zugeordneten Dokumente.
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
     {
         $group: {
@@ -182,7 +182,7 @@ db.projectReport.find({});
 //
 // $bucket:   projectFunding:     0 - 20.000    20.001 - 50.000
 
-use('c_projects');
+// use('_');
 db.projects.aggregate([
     {
         $addFields : {
