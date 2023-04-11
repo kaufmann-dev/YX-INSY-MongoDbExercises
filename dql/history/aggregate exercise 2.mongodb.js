@@ -1,8 +1,8 @@
 
 
-// -- ----------------------------------------------------------------- --
-// --  1.) Beispiel
-// -- ----------------------------------------------------------------- --
+// -----------------------------------------------------------------
+//  1.) Beispiel
+// -----------------------------------------------------------------
 // Für die Teilnehmer (Belligerents) an Schlachten soll ein Report ver-
 // faßt werden.
 
@@ -13,8 +13,8 @@
 //         nation : "...",    
 //         battles : [  // Kurzbeschreibung einer Schlacht
 //             { name : "...", troopCount : ..., losses : ... },
-//               // troopCount und losses beziehen sich auf die
-//               // eigenen Truppen
+//                  troopCount und losses beziehen sich auf die
+//                  eigenen Truppen
 //             { ... }
 //         ],
 //         victoryCount : ...  // Anzahl der Siege des Generals
@@ -142,9 +142,9 @@ db.events.aggregate([
 }]);
 
 
-// -- ----------------------------------------------------------------- --
-// --  2.) Beispiel
-// -- ----------------------------------------------------------------- --
+// -----------------------------------------------------------------
+//  2.) Beispiel
+// -----------------------------------------------------------------
 // Für Commander (collection commander) soll ein Report verfaßt werden.
 // Einem Commander werden dabei für bestimmte Aspekte Punkte zugeordnet.
 

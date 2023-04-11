@@ -1,7 +1,7 @@
 
-// -- --------------------------------------------------------------------------------- --
-// --  1.Beispiel) Aggregationsframework: $match, $project, $sort, $out (1.Punkt)
-// -- --------------------------------------------------------------------------------- --
+// ---------------------------------------------------------------------------------
+//  1.Beispiel) Aggregationsframework: $match, $project, $sort, $out (1.Punkt)
+// ---------------------------------------------------------------------------------
 // Sammeln Sie die folgenden Eventdaten in der "eventsReport" Collection. Berücksichtigen
 // Sie nur Battles. Für das Event muß zumindestens ein Review abgegeben worden sein.
 
@@ -48,9 +48,9 @@ db.events.aggregate([
     }
 ]);
 
-// -- --------------------------------------------------------------------------------- --
-// --  2.Beispiel) Aggregationsframework - $group, $out                     (1.Punkt)
-// -- --------------------------------------------------------------------------------- --
+// ---------------------------------------------------------------------------------
+//  2.Beispiel) Aggregationsframework - $group, $out                     (1.Punkt)
+// ---------------------------------------------------------------------------------
 // Geben Sie für jeden eventType folgende Werte aus. Speichern Sie Ihr Ergebnis in einer
 // Collection eventReport
 
@@ -82,11 +82,11 @@ db.events.aggregate([
     }
 ]);
 
-// -- --------------------------------------------------------------------------------- --
-// --  3.Beispiel) Aggregationsframework - $match, $unwind, $addFields, $group, $lookup
-// --                                    - $project, $out
-// --  (3.Punkte)
-// -- --------------------------------------------------------------------------------- --
+// ---------------------------------------------------------------------------------
+//  3.Beispiel) Aggregationsframework - $match, $unwind, $addFields, $group, $lookup
+//                                    - $project, $out
+//  (3.Punkte)
+// ---------------------------------------------------------------------------------
 
 // Sammeln Sie für events die folgenden Daten in der eventReport collection. Berück-
 // sichtigen Sie nur BATTLE eventTypes.

@@ -68,9 +68,9 @@ db.projects.aggregate([
     }
 ]);
 
-// -- ----------------------------------------------------------------------------------------- --
-// --  1.Beispiel) aggregate Framework
-// -- ----------------------------------------------------------------------------------------- --
+// -----------------------------------------------------------------------------------------
+//  1.Beispiel) aggregate Framework
+// -----------------------------------------------------------------------------------------
 // Zur Abgleichung der Inflationsrate wird die Förderung für Projekte
 // folgendermassen angepaßt werden. Für Managementprojekte (MANAGEMENT_PROJECT)
 // soll keine Abgleichung erfolgen. Managementprojekte erhalten eine

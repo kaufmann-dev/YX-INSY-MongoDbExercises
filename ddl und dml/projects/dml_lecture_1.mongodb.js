@@ -1,7 +1,7 @@
 
-// -- ----------------------------------------------------------------------- --
-// -- 1.Beispiel) DML - updateMany
-// -- ----------------------------------------------------------------------- --
+// -----------------------------------------------------------------------
+// 1.Beispiel) DML - updateMany
+// -----------------------------------------------------------------------
 // Syntax: db.getCollection("<collection>")
 //           .updateMany(
 //                <query  object> ,
@@ -19,9 +19,9 @@ db.getCollection("projects")
     { $set : { "marked" : true }}
 );
 
-// -- ----------------------------------------------------------------------- --
-// -- 2.Beispiel) DML - updateMany { $set, $unset, $rename }
-// -- ----------------------------------------------------------------------- --
+// -----------------------------------------------------------------------
+// 2.Beispiel) DML - updateMany { $set, $unset, $rename }
+// -----------------------------------------------------------------------
 // a) Fügen Sie zu allen Subprojekten ein Feld subprojectbegin mit dem gegen-
 //    wärtigen Datum ein.
 
@@ -83,9 +83,9 @@ db.getCollection("projects").updateMany(
 );
 
 
-// -- ----------------------------------------------------------------------- --
-// -- 3.Beispiel) DML - updateMany { $min, $max, $inc, $mul }
-// -- ----------------------------------------------------------------------- --
+// -----------------------------------------------------------------------
+// 3.Beispiel) DML - updateMany { $min, $max, $inc, $mul }
+// -----------------------------------------------------------------------
 // a) Erhöhen Sie den Wert von review für REQUEST_FUNDING_PROJECT Projekte um 2.
 
 db.projects.updateMany(
@@ -136,9 +136,9 @@ db.getCollection("subprojects").updateMany(
 );
 
 
-// -- ----------------------------------------------------------------------- --
-// -- 4.Beispiel) DML - updateMany { $addToSet, $push, $pull, $pullAll, $pop }
-// -- ----------------------------------------------------------------------- --
+// -----------------------------------------------------------------------
+// 4.Beispiel) DML - updateMany { $addToSet, $push, $pull, $pullAll, $pop }
+// -----------------------------------------------------------------------
 // a) Löschen Sie das Feld review aus allen Projekten und fügen Sie ein Feld
 //    reviews ein. Bei reviews handelt es sich um ein Array.
 

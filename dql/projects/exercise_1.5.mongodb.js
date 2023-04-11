@@ -171,7 +171,7 @@ db.getCollection("subprojects").find({
 });
 
 // --------------------------------------------------------------------------------------
-// -- 4.) Beispiel - Abfragen / Embedded Objects
+// 4.) Beispiel - Abfragen / Embedded Objects
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle Subprojekte die am Institut für Softwareentwicklung durchgeführt
 //    werden und einen Förderung haben die höher ist als 10000€.
@@ -198,7 +198,7 @@ db.subprojects.aggregate([
 ]);
 
 // --------------------------------------------------------------------------------------
-// -- 5.) Beispiel - Abfragen / in Operator
+// 5.) Beispiel - Abfragen / in Operator
 // --------------------------------------------------------------------------------------
 // Finden Sie alle Projekte die sich in einem der folgenden Zustände befinden:
 // "CREATED", "IN_APPROVEMENT", "APPROVED"

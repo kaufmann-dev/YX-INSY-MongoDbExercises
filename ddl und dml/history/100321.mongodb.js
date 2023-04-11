@@ -3,9 +3,9 @@
 db.events.find({});
 db.events.find({}).count();
 
-// -- -------------------------------------------------------------------------- --
-// --  1.Beispiel) DML Befehle - (1.Punkt)
-// -- -------------------------------------------------------------------------- --
+// --------------------------------------------------------------------------
+//  1.Beispiel) DML Befehle - (1.Punkt)
+// --------------------------------------------------------------------------
 // Fügen Sie folgende Felder zu allen (eventType) Schlacht (BATTLE)  Eintträgen
 // hinzu.
 
@@ -24,9 +24,9 @@ db.events.updateMany({
     }
 });
 
-// -- -------------------------------------------------------------------------- --
-// --  2.Beispiel) DML Befehle - (1.Punkt)
-// -- -------------------------------------------------------------------------- --
+// --------------------------------------------------------------------------
+//  2.Beispiel) DML Befehle - (1.Punkt)
+// --------------------------------------------------------------------------
 // Erhöhen Sie für alle events die Revision um 1. Ist keine Revision vorhanden soll
 // 1 eingetragen werden. Setzen Sie den Wert des Feldes "marked" auf false. Fügen
 // Sie den Einträgen ebenfalls einen Wert reviews hinzu der als Array von Integern
@@ -44,9 +44,9 @@ db.events.updateMany({
     }
 });
 
-// -- --------------------------------------------------------------------------- --
-// --  3.Beispiel) DML Befehle - (1.Punkte)
-// -- --------------------------------------------------------------------------- --
+// ---------------------------------------------------------------------------
+//  3.Beispiel) DML Befehle - (1.Punkte)
+// ---------------------------------------------------------------------------
 // Fügen Sie zu allen Schlachten die von Alexander dem Großen gewonnen wurden das
 // Keyword "Alexander the Great" hinzu.
 // Erhöhen sie die Revision um 1. Fügen Sie ebenfalls ein Review mit dem Wert 4
@@ -69,9 +69,9 @@ db.getCollection("events").updateMany({
     }
 });
 
-// -- --------------------------------------------------------------------------- --
-// --  4.Beispiel) DML Befehle - (2.Punkte)
-// -- --------------------------------------------------------------------------- --
+// ---------------------------------------------------------------------------
+//  4.Beispiel) DML Befehle - (2.Punkte)
+// ---------------------------------------------------------------------------
 // Fügen Sie zu allen Schlachten an denen mehr als 50000 Mann beteiligt waren das
 // Schlüsselwort MASS_BATTLE hinzu, falls es noch nicht vorhanden ist.
 // Für entsprechende Einträge sollen ebenfalls die folgenden 4 Review Werte hinzugefügt

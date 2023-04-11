@@ -1,8 +1,8 @@
 
 
-// -- ------------------------------------------------------------------------- --
-// -- 1.3) Beispiel - DML (1 Punkt)
-// -- ------------------------------------------------------------------------- --
+// -------------------------------------------------------------------------
+// 1.3) Beispiel - DML (1 Punkt)
+// -------------------------------------------------------------------------
 // Fügen Sie die folgenden Felder zu allen Persönlichkeiten hinzu:
 // 
 // revision : 0, published : false, review : []
@@ -16,9 +16,9 @@ db.personalities.updateMany({
     }
 });
 
-// -- ------------------------------------------------------------------------- --
-// -- 2) Beispiel - DML (1 Punkt)
-// -- ------------------------------------------------------------------------- --
+// -------------------------------------------------------------------------
+// 2) Beispiel - DML (1 Punkt)
+// -------------------------------------------------------------------------
 // Erhöhen Sie den Korruptionswert (corruption) der Generale (keyword) aus Asien 
 // um 1. Erhöhen Sie die Revision um 1 und setzen sie published auf true.
 
@@ -35,9 +35,9 @@ db.personalities.updateMany({
     }
 });
 
-// -- ------------------------------------------------------------------------- --
-// -- 3) Beispiel - DML (1 Punkt)
-// -- ------------------------------------------------------------------------- --
+// -------------------------------------------------------------------------
+// 3) Beispiel - DML (1 Punkt)
+// -------------------------------------------------------------------------
 // Alle Persönlichkeiten sollen das Keyword "Historical Person" erhalten. Das 
 // Keyword soll nur hinzugefügt werden wenn es noch nicht als Schlüsselwort ent-
 // halten ist. Erhöhen Sie die Revision für geänderte Dokumente um 1.
@@ -60,9 +60,9 @@ db.personalities.updateMany({
     }
 });
 
-// -- ------------------------------------------------------------------------- --
-// -- 4) Beispiel - DML (2 Punkt)
-// -- ------------------------------------------------------------------------- --
+// -------------------------------------------------------------------------
+// 4) Beispiel - DML (2 Punkt)
+// -------------------------------------------------------------------------
 // Entfernen Sie für alle Philosophen 1 und 3 aus den Reviews. Senken Sie den 
 // Korruptionwert um 1 und erhöhen Sie die Revision um 1.
 

@@ -1,8 +1,8 @@
 
 
-// -- ----------------------------------------------------------------------------------------- --
-// --  1.Beispiel) aggregate Framework
-// -- ----------------------------------------------------------------------------------------- --
+// -----------------------------------------------------------------------------------------
+//  1.Beispiel) aggregate Framework
+// -----------------------------------------------------------------------------------------
 // Geben Sie für jedes Institut folgenden Daten aus. Speichern Sie die Daten in einer Collection
 // facilityReport.
 //
@@ -67,9 +67,9 @@ db.facilities.aggregate([
 ]);
 db.facilityReport.find({});
 
-// -- ----------------------------------------------------------------------------------------- --
-// --  2.Beispiel) aggregate Framework - $lookup subpipeline
-// -- ----------------------------------------------------------------------------------------- --
+// -----------------------------------------------------------------------------------------
+//  2.Beispiel) aggregate Framework - $lookup subpipeline
+// -----------------------------------------------------------------------------------------
 // Finden Sie das Projekt mit der höchsten Projektförderung. Geben Sie die folgenden Felder aus:
 // title, projectType, projectState, projectFunding
 
@@ -116,9 +116,9 @@ db.projects.aggregate([
   }
 ]);
 
-// -- ----------------------------------------------------------------------------------------- --
-// --  3.Beispiel) aggregate Framework - if, switch 
-// -- ----------------------------------------------------------------------------------------- --
+// -----------------------------------------------------------------------------------------
+//  3.Beispiel) aggregate Framework - if, switch 
+// -----------------------------------------------------------------------------------------
 // Für Projekte soll ein projectReport erstellt werden. Dazu wird für jedes Projekt eine Evaluierung
 // durchgeführt. 
 //
@@ -241,9 +241,9 @@ db.projects.aggregate([
   }
 ]);
 
-// -- ----------------------------------------------------------------------------------------- --
-// --  4.Beispiel) aggregate Framework - Arrayoperator filter
-// -- ----------------------------------------------------------------------------------------- --
+// -----------------------------------------------------------------------------------------
+//  4.Beispiel) aggregate Framework - Arrayoperator filter
+// -----------------------------------------------------------------------------------------
 // Finden Sie das Projekt mit der hoechsten Projektförderung. Geben Sie die folgenden Felder aus:
 // title, projectType, projectState, projectFunding
 //
