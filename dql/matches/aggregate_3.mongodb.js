@@ -1,4 +1,4 @@
-db.matches.find()
+// Berechnen Sie das Team mit den meisten Fouls
 
 db.matches.aggregate([
     {
@@ -50,11 +50,7 @@ db.matches.aggregate([
     }
 ]);
 
-
-
-//Berechnen Sie das Match, bei dem die meisten Tore gefallen sind
-
-db.matches.find();
+// Berechnen Sie das Match, bei dem die meisten Tore gefallen sind
 
 db.matches.aggregate([
     {
@@ -89,26 +85,72 @@ db.matches.aggregate([
         }
     },
     {
+        $unwind : "$matches"
+    },
+    {
+        $group: {
+          _id: "$_id",
+          matchCount: {
+            $sum : "$matches.GoalsScored"
+          }
+        }
+    },
+    {
         $group : {
-            _id : null,
-            maxGoalsScored : {
-                $max : "$GoalsScored"
+            _id: null,
+            maxMatchCount : {
+                $max : "$matchCount"
             },
-            matches
+            matches : {
+                $addToSet : "$$ROOT"
+            }
+        }
+    },
+    {
+        $unwind : "$matches"
+    },
+    {
+        $match : {
+            $expr : {
+                $eq : [ "$maxMatchCount", "$matches.matchCount" ]
+            }
+        }
+    },
+    {
+        $replaceRoot : {
+            newRoot : "$matches"
+        }
+    },
+    {
+        $lookup: {
+          from: "matches",
+          localField: "_id",
+          foreignField:"_id",
+          as: "match"
+        }
+    },
+    {
+        $unwind : "$match"
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$match"
         }
     }
 ]);
 
-
-
-// Match bei dem die meisten Tore gefallen sind (mithilfe von reduce, map und filter)
-
-db.matches.find();
+//todo Match bei dem die meisten Tore gefallen sind (mithilfe von reduce, map und filter)
 
 db.matches.aggregate([
     {
+        $unwind : "$teams"
+    },
+    {
+        $unwind : "$teams.events"
+    },
+    {
         $match : {
-            "$teams.events.eventType" : "GOAL"
+            "teams.events.eventType" : "GOAL"
         }
     },
     {
@@ -117,7 +159,7 @@ db.matches.aggregate([
                 $map : {
                     input : "$teams",
                     as : "team",
-                    $in : {
+                    in : {
                         goalsScored : {
                             $size : "$$team.events"
                         }
@@ -128,34 +170,60 @@ db.matches.aggregate([
     }
 ]);
 
+// Gibt das Team aus welches im durchschnitt am meisten Ballsitz hat,
+// berücksichtige nur Spiele die mindestens 1000 Pässe haben
 
-
-// matches
-//Gibt das Team aus welches im durchschnitt mehr den meistne Ballsitz hat,
-//berücksichtige nur Spiele mit mindestens 1000 Pässe haben
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Gibt das Team aus welches im durchschnitt am meisten Ballsitz hat,
-//berücksichtige nur Spiele die mindestens 1000 Pässe haben
-db.matches.find()
+db.matches.aggregate([
+    {
+        $match: {
+            $expr : {
+                $gte : [
+                    {
+                        $sum : "$teams.passes"
+                    },
+                    1000
+                ]
+            }
+        }
+    },
+    {
+        $unwind : "$teams"
+    },
+    {
+        $group: {
+          _id: "$teams.name",
+          avgerageBallPossession: {
+            $avg : "$teams.ballPossession"
+          }
+        }
+    },
+    {
+        $group: {
+          _id: null,
+          maxBallPossession : {
+            $max : "$avgerageBallPossession"
+          },
+          teams  :{
+            $addToSet : "$$ROOT"
+          }
+        }
+    },
+    {
+        $unwind : "$teams"
+    },
+    {
+        $match: {
+          $expr : {
+            $eq : ["$maxBallPossession", "$teams.avgerageBallPossession"]
+          }
+        }
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$teams"
+        }
+    }
+]);
 
 db.matches.aggregate([
     {
@@ -171,7 +239,7 @@ db.matches.aggregate([
     {
         $match : {
             pass_count : {
-                $gt : 1000
+                $gte : 1000
             }
         }
     },
@@ -229,6 +297,3 @@ db.matches.aggregate([
         }
     }
 ]);
-
-
-
