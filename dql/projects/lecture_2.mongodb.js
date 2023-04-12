@@ -241,6 +241,115 @@ db.projects.aggregate([
   }
 ]);
 
+db.matches.aggregate([
+  {
+      $match : {
+          competition : "Premier League",
+          status : "FINISHED"
+      }
+  },{
+      $project : {
+          teams : {
+              $map : {
+                  input : "$teams",
+                  as : "team",
+                  in : {
+                      name : "$$team.name",
+                      teamType : "$$team.teamType",
+                      goals : {
+                          $size : {
+                              $filter : {
+                                  input : "$$team.events",
+                                  as : "event",
+                                  cond: {
+                                      $eq : ["$$event.eventType", "GOAL"]
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  },{
+      $addFields : {
+          teams : {
+              $map : {
+                  input : "$teams",
+                  as : "team",
+                  in : {
+                      name : "$$team.name",
+                      teamType : "$$team.teamType",
+                      goals : "$$team.goals",
+                      oaschgoals : {
+                          $cond : {
+                              if : {
+                                  $eq : ["$$team.teamType", "HOME_TEAM"]
+                              },
+                              then : {
+                                  $arrayElemAt : ["$teams.goals", 1]
+                              },
+                              else : {
+                                  $arrayElemAt : ["$teams.goals", 0]
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  },{
+      $addFields : {
+          teams : {
+              $map : {
+                  input : "$teams",
+                  as : "team",
+                  in : {
+                      name : "$$team.name",
+                      teamType : "$$team.teamType",
+                      goals : "$$team.goals",
+                      oaschgoals : "$$team.oaschgoals",
+                      points : {
+                          $cond : {
+                              if : {
+                                  $eq : ["$$team.goals","$$team.oaschgoals"]
+                              },
+                              then : 1,
+                              else : {
+                                  $cond : {
+                                      if : {
+                                          $gt : ["$$team.goals", "$$team.oaschgoals"]
+                                      },
+                                      then : 3,
+                                      else : 0
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  },{
+      $unwind : "$teams"
+  },{
+      $replaceRoot : {
+          newRoot : "$teams"
+      }
+  },{
+      $group : {
+          _id : "$name",
+          points : {
+              $sum : "$points"
+          }
+      }
+  },{
+      $sort : {
+          points : -1
+      }
+  }
+]);
+
 // -----------------------------------------------------------------------------------------
 //  4.Beispiel) aggregate Framework - Arrayoperator filter
 // -----------------------------------------------------------------------------------------
@@ -252,7 +361,6 @@ db.projects.aggregate([
 //             as : <item>,
 //             cond : { $op : [....] }
 //          }
-
 
 db.projects.aggregate([
   {
