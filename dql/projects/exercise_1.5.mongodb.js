@@ -24,21 +24,13 @@
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle REQUEST_FUNDING_PROJECT Projekte.
 
-db.projects.find({});
 db.projects.aggregate([
     {
         $match: {
             projectType : "REQUEST_FUNDING_PROJECT"
         }
     }
-])
-
-
-
-
-
-
-
+]);
 
 db.getCollection("projects").find({
     $and : [
@@ -48,12 +40,6 @@ db.getCollection("projects").find({
 
 // b) Finden Sie alle Projekte die vom FWF und von der FFG gesponsert werden.
 
-
-
-
-
-
-
 db.projects.aggregate([
     {
         $match : {
@@ -61,11 +47,7 @@ db.projects.aggregate([
             isFFGSponsered : true
         }
     }
-])
-
-
-
-
+]);
 
 db.getCollection("projects").find({
     $and : [
@@ -74,9 +56,7 @@ db.getCollection("projects").find({
     ]
 });
 
-// c) Finden Sie alle Projekte aus die weder "REQUEST_FUNDING_PROJECT" Projekte noch
-//    "RESEARCH_FUNDING_PROJECT" Projekte sind.
-
+// c) Finden Sie alle Projekte aus die weder "REQUEST_FUNDING_PROJECT" Projekte noch "RESEARCH_FUNDING_PROJECT" Projekte sind.
 
 db.projects.aggregate([
     {
@@ -87,10 +67,7 @@ db.projects.aggregate([
             ]
         }
     }
-])
-
-
-
+]);
 
 db.getCollection("projects").find({
     $nor : [
@@ -99,10 +76,7 @@ db.getCollection("projects").find({
     ]
 });
 
-// d) Finden Sie alle Projekte die einen der folgenden Projekttypen haben: REQUEST_FUNDING_PROJECT
-//    RESEARCH_FUNDING_PROJECT
-
-
+// d) Finden Sie alle Projekte die einen der folgenden Projekttypen haben: REQUEST_FUNDING_PROJECT, RESEARCH_FUNDING_PROJECT
 
 db.projects.aggregate([
     {
@@ -114,9 +88,6 @@ db.projects.aggregate([
         }
     }
 ])
-
-
-
 
 db.getCollection("projects").find({
     $or : [
@@ -132,14 +103,11 @@ db.getCollection("projects").find({
 //
 // Kurzform: $and Operator
 
-
-
 db.getCollection("projects").find({
     projectType: { $eq: "REQUEST_FUNDING_PROJECT" }
 });
 
 // b) Finden Sie alle Projekte die vom FWF und von der FFG gesponsert werden.
-
 
 db.getCollection("projects").find({
     $and: [
@@ -149,7 +117,6 @@ db.getCollection("projects").find({
 });
 
 // c) Finden Sie alle Subprojekte die einen appliedResearch Wert haben zwischen 50 und 100
-
 
 db.subprojects.aggregate([
     {
@@ -161,7 +128,6 @@ db.subprojects.aggregate([
         }
     }
 ])
-
 
 db.getCollection("subprojects").find({
     $and: [
@@ -175,18 +141,6 @@ db.getCollection("subprojects").find({
 // --------------------------------------------------------------------------------------
 // a) Finden Sie alle Subprojekte die am Institut für Softwareentwicklung durchgeführt
 //    werden und einen Förderung haben die höher ist als 10000€.
-
-
-db.subprojects.find({});
-db.subprojects.aggregate([
-    {
-        $match: {
-          "facility.name" : "Institut für Softwareentwicklung",
-          "funding.amount" : {$gte:10000}
-        }
-    }
-])
-
 
 db.subprojects.aggregate([
     {
@@ -203,20 +157,6 @@ db.subprojects.aggregate([
 // Finden Sie alle Projekte die sich in einem der folgenden Zustände befinden:
 // "CREATED", "IN_APPROVEMENT", "APPROVED"
 
-
-
-db.projects.find({});
-db.projects.aggregate([
-    {
-        $match: {
-          "projectState" : {
-            $in : ["CREATED", "IN_APPROVEMENT", "APPROVED"]
-          }
-        }
-    }
-])
-
-
 db.projects.aggregate([
     {
         $match: {
@@ -228,7 +168,7 @@ db.projects.aggregate([
 // --------------------------------------------------------------------------------------
 // 6.) Beispiel - Abfragen / where Operator
 // --------------------------------------------------------------------------------------
-// a) Finden Sie alle Projekte die eine Förderung haben die höher ist als 120000.
+// a) Finden Sie alle Projekte die eine Förderung haben die höher ist als 120_000.
 
 
 db.projects.aggregate([
@@ -245,7 +185,7 @@ db.projects.aggregate([
   },
   {
     $match: {
-      fundingAmount: { $gt: 12000 }
+      fundingAmount: { $gt: 120000 }
     }
   }
 ]);
@@ -259,9 +199,9 @@ db.projects.aggregate([
                 $gte : [
                     {
                         $add : [
-                            { $toInt : { $cond : [ "$isFWFSponsered", 1, 0 ] } },
-                            { $toInt : { $cond : [ "$isFFGSponsered", 1, 0 ] } },
-                            { $toInt : { $cond : [ "$isEUSponsered", 1, 0 ] } }
+                            { $cond : [ "$isFWFSponsered", 1, 0 ] },
+                            { $cond : [ "$isFFGSponsered", 1, 0 ] },
+                            { $cond : [ "$isEUSponsered", 1, 0 ] }
                         ]
                     },
                     2
@@ -269,22 +209,26 @@ db.projects.aggregate([
             }
         }
     }
-  ])
-  
+]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+db.projects.aggregate([
+    {
+        $project: {
+            _id : 0,
+            title : 1,
+            fundingLength : {
+                $size : "$fundings"
+            }
+        }
+    },
+    {
+        $match: {
+          fundingLength : {
+            $gte : 2
+          }
+        }
+    }
+]);
 
 db.projects.find({
     $where : function (){
@@ -293,7 +237,6 @@ db.projects.find({
 });
 
 // c) Finden Sie alle Projekte die von der "TU Wien" gefördert werden.
-
 
 db.projects.find({
     $where : function(){
@@ -314,7 +257,6 @@ db.projects.find({
 //
 // Sortieren Sie das Ergebnis nach dem titel aufsteigend.
 
-
 db.projects.find({
     projectType: "RESEARCH_FUNDING_PROJECT",
     $where : function(){
@@ -326,3 +268,27 @@ db.projects.find({
     projectType : 1,
     projectState : 1
 }).sort({ title : 1 });
+
+db.projects.aggregate([
+    {
+        $match: {
+            projectType : "REQUEST_FUNDING_PROJECT",
+            $expr : {
+                $gte : [
+                    {
+                        $size : "$subprojects"
+                    },
+                    2
+                ]
+            }
+        }
+    },
+    {
+        $project: {
+          _id : 0,
+          title : 1,
+          projectType : 1,
+          projectState : 1
+        }
+    }
+]);

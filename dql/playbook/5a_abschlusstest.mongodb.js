@@ -74,6 +74,58 @@ db.lw1.aggregate([
     }
   },
   {
+    $unwind : "$events"
+  },
+  {
+    $group: {
+      _id: "$region.name",
+      sections : {
+        $count:{}
+      }
+    }
+  },
+  {
+    $group : {
+      _id : null,
+      maxSections : {
+        $max : "$sections" 
+      },
+      regions : {
+        $addToSet : "$$ROOT"
+      }
+    }
+  },
+  {
+    $unwind : "$regions"
+  },
+  {
+    $match: {
+      $expr : {
+        $eq : [
+          "$maxSections",
+          "$regions.sections"
+        ]
+      }
+    }
+  },
+  {
+    $replaceRoot: {
+      newRoot: "$regions"
+    }
+  }
+]);
+
+db.lw1.aggregate([
+  {
+    $match : {
+      events : {
+        $elemMatch : {
+          eventType : "COMBAT"
+        }
+      }
+    }
+  },
+  {
     $addFields : {
       battleCount : {
         $size : "$events"
