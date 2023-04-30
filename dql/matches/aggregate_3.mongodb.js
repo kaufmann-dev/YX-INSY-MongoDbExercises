@@ -32,8 +32,11 @@ db.matches.aggregate([
                 $filter: {
                     input: "$matches",
                     as: "match",
+                    let : {
+                        maxFoulCount : "$maxFoulsCount"
+                    },
                     cond: {
-                    	$eq : ["$$match.foulCount", "$maxFoulsCount"]
+                    	$eq : ["$$match.foulCount", "$maxFoulCount"]
                     }
                 }
             }
@@ -46,6 +49,65 @@ db.matches.aggregate([
     {
         $replaceRoot : {
             newRoot : "$matches"
+        }
+    }
+]);
+
+db.matches.aggregate([
+    {
+        $unwind : "$teams"
+    },
+    {
+        $unwind : "$teams.events"
+    },
+    {
+        $match: {
+            "teams.events.eventType" : "YELLOW_CARD"
+        }
+    },
+    {
+        $group: {
+          _id: "$teams.name",
+          events: {
+            $addToSet : "$teams.events"
+          }
+        }
+    },{
+        $project: {
+            _id : 0,
+            name : "$_id",
+            yellowCardCount : {
+                $size : "$events"
+            }
+        }
+    },
+    {
+        $group: {
+            _id: null,
+            maxYellowCardCount: {
+                $max : "$yellowCardCount"
+            },
+            yellowCards : {
+                $addToSet : "$$ROOT"
+            }
+        }
+    },
+    {
+        $unwind : "$yellowCards"
+    },
+    {
+        $match: {
+          $expr : {
+            $eq : [
+                "$maxYellowCardCount",
+                "$yellowCards.yellowCardCount"
+            ]
+          }
+        }
+    },
+    {
+        $replaceRoot: {
+          newRoot: "$yellowCards"
         }
     }
 ]);
